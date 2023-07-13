@@ -176,18 +176,55 @@ class Terrain:
         heightmap_copy = heightmap.copy()
 
         # Iterate over the heightmap
-        for i in range(heightmap.shape[0]):
-            for j in range(heightmap.shape[1]):
+        for x in range(heightmap.shape[0]):
+            for y in range(heightmap.shape[1]):
                 # Get the number of live neighbours
-                #neighbours = heightmap[i - 1, j - 1] + heightmap[i - 1, j] + heightmap[i - 1, (j + 1) % heightmap.shape[1]] + heightmap[i, j - 1] + heightmap[i, (j + 1) % heightmap.shape[1]] + heightmap[(i + 1) % heightmap.shape[0], j - 1] + heightmap[(i + 1) % heightmap.shape[0], j] + heightmap[(i + 1) % heightmap.shape[0], (j + 1 % heightmap.shape[1])]
-                # TODO: Implement sliding window for neighbours
-                pass
+                neighbours = self.__get_neighbours(heightmap, x, y)
+
                 # Determine whether the cell lives or dies
-                #heightmap_copy[i, j] = self.__live_or_die(heightmap[i, j], neighbours)
+                heightmap_copy[x, y] = self.__live_or_die(heightmap[x, y], neighbours)
 
         # Return the heightmap
-        #return heightmap_copy
-        return heightmap # TODO: Remove this line
+        return heightmap_copy
+    
+    def __get_neighbours(self, heightmap, x, y):
+        '''
+        Gets the neighbours of a given cell.
+
+        Parameters
+        ----------
+        heightmap : numpy array
+            The heightmap to get the neighbours from.
+        x : int
+            The x coordinate of the cell.
+        y : int
+            The y coordinate of the cell.
+
+        Returns
+        -------
+        neighbours : int
+            The number of live neighbours of the cell.
+        '''
+        # Initialize the number of neighbours
+        neighbours = 0
+
+        # Iterate over the neighbours
+        for i in range(-1, 2):
+            for j in range(-1, 2):
+                # If the neighbour is the cell itself, skip it
+                if i == 0 and j == 0:
+                    continue
+
+                # If the neighbour is outside the heightmap, skip it
+                if x + i < 0 or x + i >= heightmap.shape[0] or y + j < 0 or y + j >= heightmap.shape[1]:
+                    continue
+
+                # If the neighbour is alive, increase the number of neighbours
+                if heightmap[x + i, y + j] == 1:
+                    neighbours += 1
+
+        # Return the number of neighbours
+        return neighbours
 
     def generate(self):
         '''
