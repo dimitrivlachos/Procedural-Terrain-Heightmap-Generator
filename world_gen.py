@@ -70,6 +70,7 @@ class Terrain:
         # If all checks pass, set the attributes
         self.seed = seed
         self.start_size = start_size
+        self.size = start_size # This will be updated as the heightmap is generated
         self.is_generated = False
         self.heightmap = None
 
@@ -118,6 +119,9 @@ class Terrain:
 
         # Increase the size of the heightmap by the zoom factor
         zoomed_heightmap = np.kron(heightmap, np.ones((zoom_factor, zoom_factor)))
+
+        # Increase the tracked size of the heightmap
+        self.size = (self.size[0] * zoom_factor, self.size[1] * zoom_factor)
 
         # Return the zoomed heightmap
         return zoomed_heightmap
