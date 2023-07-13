@@ -89,6 +89,7 @@ def get_neighbours(heightmap, x, y):
 
 def game_of_life(cell, neighbours):
         '''      
+        One of the cellular automata algorithms that can be used to generate terrain.
         Determines whether a cell lives or dies based on the number of live neighbours.
         This is the algorithm used by Conway's Game of Life.
 
