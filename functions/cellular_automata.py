@@ -8,7 +8,7 @@ Description:
     These functions are used to apply cellular automata algorithms to a heightmap.
 '''
 
-def cellular_automata(heightmap, algorithm):
+def cellular_automata(heightmap, algorithm, rng = None):
     '''
     Applies cellular automata to the heightmap.
 
@@ -39,7 +39,7 @@ def cellular_automata(heightmap, algorithm):
             neighbours = get_neighbours(heightmap, x, y)
 
             # Determine whether the cell lives or dies
-            heightmap_copy[x, y] = algorithm(heightmap[x, y], neighbours)
+            heightmap_copy[x, y] = algorithm(heightmap[x, y], neighbours, rng)
 
     # Return the heightmap
     return heightmap_copy
@@ -87,7 +87,7 @@ def get_neighbours(heightmap, x, y):
 # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # 
 # Cellular automata algorithms
 
-def game_of_life(cell, neighbours):
+def game_of_life(cell, neighbours, rng = None):
     '''      
     One of the cellular automata algorithms that can be used to generate terrain.
     Determines whether a cell lives or dies based on the number of live neighbours.
@@ -126,7 +126,7 @@ def game_of_life(cell, neighbours):
     # Return the cell
     return cell
 
-def b678s345678(cell, neighbours):
+def b678s345678(cell, neighbours, rng = None):
         '''      
         One of the cellular automata algorithms that can be used to generate terrain.
         Determines whether a cell lives or dies based on the number of live neighbours.
@@ -158,7 +158,7 @@ def b678s345678(cell, neighbours):
         # Return the cell
         return cell
 
-def add_island(cell, neighbours, rng):
+def add_island(cell, neighbours, rng = None):
     '''
     One of the cellular automata algorithms that can be used to generate terrain.
     Determines whether a cell lives or dies based on the number of live neighbours.
@@ -178,6 +178,11 @@ def add_island(cell, neighbours, rng):
     cell : int
         The value of the cell after the cellular automata rules have been applied.
     '''
+
+    # Check if the random number generator is None
+    if rng is None:
+        raise ValueError("Random number generator is required for this algorithm. The random number generator cannot be None.")
+
     # If the cell is alive
     if cell == 1:
         # The cell has a chance to die relative to the number of dead neighbours
