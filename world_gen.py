@@ -125,6 +125,25 @@ class Terrain:
 
         # Return the zoomed heightmap
         return zoomed_heightmap
+    
+    def __add_island(self, heightmap):
+        '''
+        Uses cellular automata to add an island to the heightmap. Connecting existing islands together
+        and eroding the edges of the island.
+
+        Parameters
+        ----------
+        heightmap : numpy array
+            The heightmap to add an island to.
+
+        Returns
+        -------
+        island_heightmap : numpy array
+            The heightmap with an island added to it.
+        '''
+
+        # Initialize the island layer
+
 
     def generate(self):
         '''
@@ -152,6 +171,7 @@ class Terrain:
         print(island_layer)
 
         # Zoom in on the island layer
+        # This takes the island layer from 4x4 to 8x8 (by default)
         island_layer = self.__zoom(island_layer)
 
         print(island_layer)
