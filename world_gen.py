@@ -23,7 +23,6 @@ Sources:
 
 import noise.perlin_noise as pn
 import numpy as np
-from numpy.random import Generator, PCG64 # To be able to set a seed for the random number generator
 
 class Terrain:
     '''
@@ -91,7 +90,7 @@ class Terrain:
         '''
         return f'Terrain object with seed {self.seed} and start size {self.start_size}.'
 
-    def zoom(self, heightmap, zoom_factor = 2):
+    def __zoom(self, heightmap, zoom_factor = 2):
         '''
         'Zooms' in on the terrain object by the given factor (default is 2).
         This is done through the usage of cellular automata.
@@ -116,7 +115,79 @@ class Terrain:
         if zoom_factor < 1:
             raise ValueError('Zoom factor must be greater than 0.')
 
-        
+        # Increase the size of the heightmap by the zoom factor
+        zoomed_heightmap = np.kron(heightmap, np.ones((zoom_factor, zoom_factor)))
+
+        # Return the zoomed heightmap
+        return zoomed_heightmap
+    
+    def __live_or_die(self, cell, neighbours):
+        '''
+        Determines whether a cell lives or dies based on the number of live neighbours.
+
+        Parameters
+        ----------
+        cell : int
+            The value of the cell
+        neighbours : int
+            The number of live neighbours of the cell
+
+        Returns
+        -------
+        cell : int
+            The value of the cell after the cellular automata rules have been applied.
+        '''
+        # If the cell is alive
+        if cell == 1:
+            # If the cell has less than 2 live neighbours, it dies
+            if neighbours < 2:
+                cell = 0
+            # If the cell has more than 3 live neighbours, it dies
+            elif neighbours > 3:
+                cell = 0
+            # If the cell has 2 or 3 live neighbours, it lives
+            else:
+                cell = 1
+
+        # If the cell is dead
+        else:
+            # If the cell has exactly 3 live neighbours, it lives
+            if neighbours == 3:
+                cell = 1
+
+        # Return the cell
+        return cell
+    
+    def __cellular_automata(self, heightmap):
+        '''
+        Applies cellular automata to the heightmap.
+
+        Parameters
+        ----------
+        heightmap : numpy array
+            The heightmap to apply cellular automata to.
+
+        Returns
+        -------
+        heightmap : numpy array
+            The heightmap after cellular automata has been applied.
+        '''
+        # Create a copy of the heightmap
+        heightmap_copy = heightmap.copy()
+
+        # Iterate over the heightmap
+        for i in range(heightmap.shape[0]):
+            for j in range(heightmap.shape[1]):
+                # Get the number of live neighbours
+                #neighbours = heightmap[i - 1, j - 1] + heightmap[i - 1, j] + heightmap[i - 1, (j + 1) % heightmap.shape[1]] + heightmap[i, j - 1] + heightmap[i, (j + 1) % heightmap.shape[1]] + heightmap[(i + 1) % heightmap.shape[0], j - 1] + heightmap[(i + 1) % heightmap.shape[0], j] + heightmap[(i + 1) % heightmap.shape[0], (j + 1 % heightmap.shape[1])]
+                # TODO: Implement sliding window for neighbours
+                pass
+                # Determine whether the cell lives or dies
+                #heightmap_copy[i, j] = self.__live_or_die(heightmap[i, j], neighbours)
+
+        # Return the heightmap
+        #return heightmap_copy
+        return heightmap # TODO: Remove this line
 
     def generate(self):
         '''
@@ -134,10 +205,25 @@ class Terrain:
 
         # Initialize the seed map / island layer
         island_layer = np.zeros(self.start_size, dtype = int)
+
+        print(island_layer)
         
         # Randomly set 1/10 of the pixels to 1
         indices_to_flip = self.rng.random(island_layer.shape) < 0.1
         island_layer[indices_to_flip] = 1
+
+        print(island_layer)
+
+        # Zoom in on the island layer
+        island_layer = self.__zoom(island_layer)
+
+        print(island_layer)
+
+        # Apply cellular automata to the island layer
+        #for i in range(5):
+        island_layer = self.__cellular_automata(island_layer)
+
+        print('Cellular\n', island_layer)
 
 
 
