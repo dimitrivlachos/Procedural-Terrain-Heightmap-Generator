@@ -143,7 +143,10 @@ class Terrain:
         '''
 
         # Initialize the island layer
+        heightmap = ca.cellular_automata(heightmap, ca.add_island, rng=self.rng)
 
+        # Return the island layer
+        return heightmap
 
     def generate(self):
         '''
@@ -160,27 +163,31 @@ class Terrain:
         '''
 
         # Initialize the seed map / island layer
-        island_layer = np.zeros(self.start_size, dtype = int)
+        heightmap = np.zeros(self.start_size, dtype = int)
 
-        print(island_layer)
+        print(heightmap)
         
         # Randomly set 1/10 of the pixels to 1
-        indices_to_flip = self.rng.random(island_layer.shape) < 0.1
-        island_layer[indices_to_flip] = 1
+        indices_to_flip = self.rng.random(heightmap.shape) < 0.1
+        heightmap[indices_to_flip] = 1
 
-        print(island_layer)
+        print(heightmap)
 
-        # Zoom in on the island layer
+        # Zoom in on the island layer 4096->2048 per block
         # This takes the island layer from 4x4 to 8x8 (by default)
-        island_layer = self.__zoom(island_layer)
+        heightmap = self.__zoom(heightmap)
 
-        print(island_layer)
+        print(heightmap)
 
         # Apply cellular automata to the island layer
-        #for i in range(5):
-        island_layer = ca.cellular_automata(island_layer, ca.game_of_life)
+        heightmap = ca.cellular_automata(heightmap, ca.game_of_life, rng=self.rng)
 
-        print('Cellular\n', island_layer)
+        print(heightmap)
+
+        # Perform add island step
+        heightmap = self.__add_island(heightmap)
+
+        print(heightmap)
 
 
 # Test code
