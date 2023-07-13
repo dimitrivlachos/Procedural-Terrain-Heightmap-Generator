@@ -22,6 +22,8 @@ Sources:
 '''
 
 import noise.perlin_noise as pn
+import numpy as np
+from numpy.random import Generator, PCG64 # To be able to set a seed for the random number generator
 
 class Terrain:
     '''
@@ -39,32 +41,106 @@ class Terrain:
 
     '''
 
-    def __init__(self, size, seed):
+    def __init__(self, seed, start_size = (4, 4)):
         '''
         Constructs all the necessary attributes for the terrain object.
 
         Parameters
         ----------
-        size : tuple of ints
-            The size of the heightmap in pixels. (x, y)
         seed : int
             The seed used to generate the heightmap.
+        size : tuple of ints
+            The size of the initial seed-map. This will be 4096 times smaller than the final heightmap.
+            Default is (4, 4) which will result in a 4x4 seed-map and a 16384x16384 pixel heightmap.
         '''
-
-        # Check that the size is a tuple of ints
-        if not isinstance(size, tuple):
-            raise TypeError('Size must be a tuple of ints.')
-        if not isinstance(size[0], int) or not isinstance(size[1], int):
-            raise TypeError('Size must be a tuple of ints.')
-        
-        # Check that the size of size is 2
-        if len(size) != 2:
-            raise ValueError('Size must be a tuple of length 2. (x, y)')
-        
         # Check that the seed is an int
         if not isinstance(seed, int):
             raise TypeError('Seed must be an int.')
+        
+        # Check that the size is a tuple of ints
+        if not isinstance(start_size, tuple):
+            raise TypeError('Size must be a tuple of ints.')
+        if not isinstance(start_size[0], int) or not isinstance(start_size[1], int):
+            raise TypeError('Size must be a tuple of ints.')
+        
+        # Check that the size of size is 2
+        if len(start_size) != 2:
+            raise ValueError('Size must be a tuple of length 2. (x, y)')
 
         # If all checks pass, set the attributes
-        self.size = size
         self.seed = seed
+        self.start_size = start_size
+        self.is_generated = False
+        self.heightmap = None
+
+        # Instantiate the random number generator
+        self.rng = np.random.default_rng(seed = self.seed)
+
+    def __str__(self):
+        '''
+        Returns a string representation of the terrain object.
+
+        Parameters
+        ----------
+        None
+
+        Returns
+        -------
+        string : str
+            A string representation of the terrain object.
+        '''
+        return f'Terrain object with seed {self.seed} and start size {self.start_size}.'
+
+    def zoom(self, heightmap, zoom_factor = 2):
+        '''
+        'Zooms' in on the terrain object by the given factor (default is 2).
+        This is done through the usage of cellular automata.
+
+        Parameters
+        ----------
+        heightmap : numpy array
+            The heightmap to zoom in on.
+        zoom_factor : int
+            The factor by which to zoom in on the terrain object. Default is 2.
+
+        Returns
+        -------
+        zoomed_heightmap : numpy array
+            The zoomed in heightmap.
+        '''
+        # Check that the zoom factor is an int
+        if not isinstance(zoom_factor, int):
+            raise TypeError('Zoom factor must be an int.')
+        
+        # Check that the zoom factor is greater than 0
+        if zoom_factor < 1:
+            raise ValueError('Zoom factor must be greater than 0.')
+
+        
+
+    def generate(self):
+        '''
+        Generates the heightmap for the terrain object.
+
+        Parameters
+        ----------
+        None
+
+        Returns
+        -------
+        heightmap : numpy array
+            The heightmap for the terrain object.
+        '''
+
+        # Initialize the seed map / island layer
+        island_layer = np.zeros(self.start_size, dtype = int)
+        
+        # Randomly set 1/10 of the pixels to 1
+        indices_to_flip = self.rng.random(island_layer.shape) < 0.1
+        island_layer[indices_to_flip] = 1
+
+
+
+if __name__ == '__main__':
+    terraintest = Terrain(0)
+    terraintest.generate()
