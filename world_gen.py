@@ -226,7 +226,7 @@ class Terrain:
         print('Cellular\n', island_layer)
 
 
-
+# Test code
 if __name__ == '__main__':
     terraintest = Terrain(0)
     terraintest.generate()
