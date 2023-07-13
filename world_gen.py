@@ -21,9 +21,9 @@ Sources:
     https://www.alanzucconi.com/2022/06/05/minecraft-world-generation/
 '''
 
-import noise.perlin_noise as pn
 import numpy as np
-import cellular_automata as ca
+import functions.perlin_noise as pn
+import functions.cellular_automata as ca
 
 class Terrain:
     '''
