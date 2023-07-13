@@ -23,6 +23,7 @@ Sources:
 
 import noise.perlin_noise as pn
 import numpy as np
+import cellular_automata as ca
 
 class Terrain:
     '''
@@ -120,111 +121,6 @@ class Terrain:
 
         # Return the zoomed heightmap
         return zoomed_heightmap
-    
-    def __live_or_die(self, cell, neighbours):
-        '''
-        Determines whether a cell lives or dies based on the number of live neighbours.
-
-        Parameters
-        ----------
-        cell : int
-            The value of the cell
-        neighbours : int
-            The number of live neighbours of the cell
-
-        Returns
-        -------
-        cell : int
-            The value of the cell after the cellular automata rules have been applied.
-        '''
-        # If the cell is alive
-        if cell == 1:
-            # If the cell has less than 2 live neighbours, it dies
-            if neighbours < 2:
-                cell = 0
-            # If the cell has more than 3 live neighbours, it dies
-            elif neighbours > 3:
-                cell = 0
-            # If the cell has 2 or 3 live neighbours, it lives
-            else:
-                cell = 1
-
-        # If the cell is dead
-        else:
-            # If the cell has exactly 3 live neighbours, it lives
-            if neighbours == 3:
-                cell = 1
-
-        # Return the cell
-        return cell
-    
-    def __cellular_automata(self, heightmap):
-        '''
-        Applies cellular automata to the heightmap.
-
-        Parameters
-        ----------
-        heightmap : numpy array
-            The heightmap to apply cellular automata to.
-
-        Returns
-        -------
-        heightmap : numpy array
-            The heightmap after cellular automata has been applied.
-        '''
-        # Create a copy of the heightmap
-        heightmap_copy = heightmap.copy()
-
-        # Iterate over the heightmap
-        for x in range(heightmap.shape[0]):
-            for y in range(heightmap.shape[1]):
-                # Get the number of live neighbours
-                neighbours = self.__get_neighbours(heightmap, x, y)
-
-                # Determine whether the cell lives or dies
-                heightmap_copy[x, y] = self.__live_or_die(heightmap[x, y], neighbours)
-
-        # Return the heightmap
-        return heightmap_copy
-    
-    def __get_neighbours(self, heightmap, x, y):
-        '''
-        Gets the neighbours of a given cell.
-
-        Parameters
-        ----------
-        heightmap : numpy array
-            The heightmap to get the neighbours from.
-        x : int
-            The x coordinate of the cell.
-        y : int
-            The y coordinate of the cell.
-
-        Returns
-        -------
-        neighbours : int
-            The number of live neighbours of the cell.
-        '''
-        # Initialize the number of neighbours
-        neighbours = 0
-
-        # Iterate over the neighbours
-        for i in range(-1, 2):
-            for j in range(-1, 2):
-                # If the neighbour is the cell itself, skip it
-                if i == 0 and j == 0:
-                    continue
-
-                # If the neighbour is outside the heightmap, skip it
-                if x + i < 0 or x + i >= heightmap.shape[0] or y + j < 0 or y + j >= heightmap.shape[1]:
-                    continue
-
-                # If the neighbour is alive, increase the number of neighbours
-                if heightmap[x + i, y + j] == 1:
-                    neighbours += 1
-
-        # Return the number of neighbours
-        return neighbours
 
     def generate(self):
         '''
@@ -258,7 +154,7 @@ class Terrain:
 
         # Apply cellular automata to the island layer
         #for i in range(5):
-        island_layer = self.__cellular_automata(island_layer)
+        island_layer = ca.cellular_automata(island_layer, ca.game_of_life)
 
         print('Cellular\n', island_layer)
 
