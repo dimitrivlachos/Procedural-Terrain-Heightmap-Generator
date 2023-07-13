@@ -88,10 +88,49 @@ def get_neighbours(heightmap, x, y):
 # Cellular automata algorithms
 
 def game_of_life(cell, neighbours):
+    '''      
+    One of the cellular automata algorithms that can be used to generate terrain.
+    Determines whether a cell lives or dies based on the number of live neighbours.
+    This is the algorithm used by Conway's Game of Life.
+
+    Parameters
+    ----------
+    cell : int
+        The value of the cell
+    neighbours : int
+        The number of live neighbours of the cell
+
+    Returns
+    -------
+    cell : int
+        The value of the cell after the cellular automata rules have been applied.
+    '''
+    # If the cell is alive
+    if cell == 1:
+        # If the cell has less than 2 live neighbours, it dies
+        if neighbours < 2:
+            cell = 0
+        # If the cell has more than 3 live neighbours, it dies
+        elif neighbours > 3:
+            cell = 0
+        # If the cell has 2 or 3 live neighbours, it lives
+        else:
+            cell = 1
+
+    # If the cell is dead
+    else:
+        # If the cell has exactly 3 live neighbours, it lives
+        if neighbours == 3:
+            cell = 1
+
+    # Return the cell
+    return cell
+
+def b678s345678(cell, neighbours):
         '''      
         One of the cellular automata algorithms that can be used to generate terrain.
         Determines whether a cell lives or dies based on the number of live neighbours.
-        This is the algorithm used by Conway's Game of Life.
+        This is the algorithm used by Brian's Brain.
 
         Parameters
         ----------
@@ -107,21 +146,53 @@ def game_of_life(cell, neighbours):
         '''
         # If the cell is alive
         if cell == 1:
-            # If the cell has less than 2 live neighbours, it dies
-            if neighbours < 2:
-                cell = 0
-            # If the cell has more than 3 live neighbours, it dies
-            elif neighbours > 3:
-                cell = 0
-            # If the cell has 2 or 3 live neighbours, it lives
-            else:
-                cell = 1
+            # The cell dies
+            cell = 0
 
         # If the cell is dead
         else:
-            # If the cell has exactly 3 live neighbours, it lives
-            if neighbours == 3:
+            # If the cell has 6, 7, 8 live neighbours, it lives
+            if neighbours >= 6:
                 cell = 1
 
         # Return the cell
         return cell
+
+def add_island(cell, neighbours, rng):
+    '''
+    One of the cellular automata algorithms that can be used to generate terrain.
+    Determines whether a cell lives or dies based on the number of live neighbours.
+    This is a custom algorithm that connects islands together and erodes the edges.
+
+    Parameters
+    ----------
+    cell : int
+        The value of the cell
+    neighbours : int
+        The number of live neighbours of the cell
+    rng : numpy random generator
+        The random number generator to use.
+
+    Returns
+    -------
+    cell : int
+        The value of the cell after the cellular automata rules have been applied.
+    '''
+    # If the cell is alive
+    if cell == 1:
+        # The cell has a chance to die relative to the number of dead neighbours
+        chance_to_die = 1 - ((neighbours + 8) / 24)
+
+        if rng.random() < chance_to_die:
+            cell = 0
+
+    # If the cell is dead
+    else:
+        # The cell has a chance to live relative to the number of live neighbours
+        chance_to_live = (neighbours + 8) / 24
+
+        if rng.random() < chance_to_live:
+            cell = 1
+
+    # Return the cell
+    return cell
