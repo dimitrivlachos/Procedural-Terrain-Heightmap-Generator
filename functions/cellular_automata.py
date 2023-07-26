@@ -126,7 +126,7 @@ def game_of_life(cell, neighbours, rng = None):
     # Return the cell
     return cell
 
-def b678s345678(cell, neighbours, rng = None):
+def brians_brain(cell, neighbours, rng = None):
         '''      
         One of the cellular automata algorithms that can be used to generate terrain.
         Determines whether a cell lives or dies based on the number of live neighbours.
