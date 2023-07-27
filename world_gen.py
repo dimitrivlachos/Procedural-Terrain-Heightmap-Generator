@@ -147,6 +147,27 @@ class Terrain:
 
         # Return the island layer
         return heightmap
+    
+    def __remove_ocean(self, heightmap):
+        '''
+        Removes ocean from the heightmap.
+
+        Parameters
+        ----------
+        heightmap : numpy array
+            The heightmap to remove ocean from.
+
+        Returns
+        -------
+        heightmap : numpy array
+            The heightmap with ocean removed.
+        '''
+
+        # Initialize the ocean layer
+        heightmap = ca.cellular_automata(heightmap, ca.remove_ocean, rng=self.rng)
+
+        # Return the ocean layer
+        return heightmap
 
     def generate(self):
         '''
@@ -164,31 +185,48 @@ class Terrain:
 
         # Initialize the seed map / island layer
         heightmap = np.zeros(self.start_size, dtype = int)
-
-        print(heightmap)
         
         # Randomly set 1/10 of the pixels to 1
         indices_to_flip = self.rng.random(heightmap.shape) < 0.1
         heightmap[indices_to_flip] = 1
 
-        print(heightmap)
-
         # Zoom in on the island layer 4096->2048 per block
         # This takes the island layer from 4x4 to 8x8 (by default)
         heightmap = self.__zoom(heightmap)
 
-        print(heightmap)
-
         # Apply cellular automata to the island layer
-        heightmap = ca.cellular_automata(heightmap, ca.game_of_life, rng=self.rng)
-
-        print(heightmap)
+        heightmap = ca.cellular_automata(heightmap, ca.add_island, rng=self.rng)
 
         # Perform add island step
         heightmap = self.__add_island(heightmap)
 
-        print(heightmap)
+        # Zoom in on the island layer 2048->1024 per block
+        # This takes the island layer from 8x8 to 16x16 (by default)
+        heightmap = self.__zoom(heightmap)
 
+        # Add island
+        heightmap = self.__add_island(heightmap)
+        heightmap = self.__add_island(heightmap)
+        heightmap = self.__add_island(heightmap)
+
+        # Remove too much ocean
+        heightmap = self.__remove_ocean(heightmap)
+
+        # Zoom in on the island layer 1024->512 per block
+        # This takes the island layer from 16x16 to 32x32 (by default)
+        heightmap = self.__zoom(heightmap)
+
+        # Zoom in on the island layer 512->256 per block
+        # This takes the island layer from 32x32 to 64x64 (by default)
+        heightmap = self.__zoom(heightmap)
+
+        # Add island
+        heightmap = self.__add_island(heightmap)
+
+        # TODO: Add deep ocean
+
+        # Save the heightmap to text
+        np.savetxt(f'heightmap_{self.seed}.txt', heightmap, fmt='%d')
 
 # Test code
 if __name__ == '__main__':
