@@ -183,10 +183,23 @@ def add_island(cell, neighbours, rng = None):
     if rng is None:
         raise ValueError("Random number generator is required for this algorithm. The random number generator cannot be None.")
 
+
+    probabilities = {
+        0: 0.0,
+        1: 0.01,
+        2: 0.05,
+        3: 0.1,
+        4: 0.15,
+        5: 0.2,
+        6: 0.3,
+        7: 0.4,
+        8: 0.5
+    }
+
     # If the cell is alive
     if cell == 1:
         # The cell has a chance to die relative to the number of dead neighbours
-        chance_to_die = 1 - ((neighbours + 8) / 24)
+        chance_to_die = probabilities[abs(neighbours - 8)] # Reverse the probabilities
 
         if rng.random() < chance_to_die:
             cell = 0
@@ -194,7 +207,7 @@ def add_island(cell, neighbours, rng = None):
     # If the cell is dead
     else:
         # The cell has a chance to live relative to the number of live neighbours
-        chance_to_live = (neighbours + 8) / 24
+        chance_to_live = probabilities[neighbours]
 
         if rng.random() < chance_to_live:
             cell = 1
