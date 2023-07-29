@@ -264,10 +264,17 @@ def zoom_imperfection(cell, neighbours, rng = None):
 
     # Check if cell is dead
     if cell == 0:
-        # if the cell has no live neighbours, it has a chance to live
-        if neighbours == 0:
-            if rng.random() < 0.5:
+        # and has some live neighbours, it has a chance to live
+        if neighbours > 0:
+            if rng.random() < 0.05:
                 cell = 1
+
+    # Check if cell is alive
+    else:
+        # and has some dead neighbours, it has a chance to die
+        if neighbours > 0:
+            if rng.random() < 0.05:
+                cell = 0
 
     # Return the cell
     return cell
