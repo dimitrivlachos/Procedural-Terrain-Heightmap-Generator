@@ -25,6 +25,8 @@ import numpy as np
 import functions.perlin_noise as pn
 import functions.cellular_automata as ca
 
+import matplotlib.pyplot as plt
+
 class Terrain:
     '''
     A class to represent a terrain heightmap.
@@ -210,7 +212,7 @@ class Terrain:
         heightmap = self.__add_island(heightmap)
 
         # Remove too much ocean
-        heightmap = self.__remove_ocean(heightmap)
+        #heightmap = self.__remove_ocean(heightmap)
 
         # Zoom in on the island layer 1024->512 per block
         # This takes the island layer from 16x16 to 32x32 (by default)
@@ -228,7 +230,13 @@ class Terrain:
         # Save the heightmap to text
         np.savetxt(f'heightmap_{self.seed}.txt', heightmap, fmt='%d')
 
+        self.heightmap = heightmap
+
 # Test code
 if __name__ == '__main__':
     terraintest = Terrain(0)
     terraintest.generate()
+    plt.imshow(terraintest.heightmap, cmap='gray')
+    plt.show()
+
+    #print(type(terraintest.heightmap))
