@@ -214,34 +214,15 @@ class Terrain:
             The heightmap with the first stack of layers.
         '''
 
-        # Zoom in on the island layer 4096->2048 per block
-        # This takes the island layer from 4x4 to 8x8 (by default)
-        heightmap = self.__zoom(heightmap)
-
-        # Perform add island step
+        heightmap = self.__zoom(heightmap) # 4x4 -> 8x8 (4096 -> 2048)
         heightmap = self.__add_island(heightmap)
-
-        # Zoom in on the island layer 2048->1024 per block
-        # This takes the island layer from 8x8 to 16x16 (by default)
-        heightmap = self.__zoom(heightmap)
-
-        # Add island
+        heightmap = self.__zoom(heightmap)# 8x8 -> 16x16 (2048 -> 1024)
         heightmap = self.__add_island(heightmap)
         heightmap = self.__add_island(heightmap)
         heightmap = self.__add_island(heightmap)
-
-        # Remove too much ocean
         #heightmap = self.__remove_ocean(heightmap)
-
-        # Zoom in on the island layer 1024->512 per block
-        # This takes the island layer from 16x16 to 32x32 (by default)
-        heightmap = self.__zoom(heightmap)
-
-        # Zoom in on the island layer 512->256 per block
-        # This takes the island layer from 32x32 to 64x64 (by default)
-        heightmap = self.__zoom(heightmap)
-
-        # Add island
+        heightmap = self.__zoom(heightmap) # 16x16 -> 32x32 (1024 -> 512)
+        heightmap = self.__zoom(heightmap) # 32x32 -> 64x64 (512 -> 256)
         heightmap = self.__add_island(heightmap)
 
         # TODO: Add deep ocean
