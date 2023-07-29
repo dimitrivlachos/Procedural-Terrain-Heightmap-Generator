@@ -236,3 +236,38 @@ def remove_ocean(cell, neighbours, rng = None):
 
     # Return the cell
     return cell
+
+def zoom_imperfection(cell, neighbours, rng = None):
+    '''
+    One of the cellular automata algorithms that can be used to generate terrain.
+    Determines whether a cell lives or dies based on the number of live neighbours.
+    This is a custom algorithm that adds imperfections to the terrain.
+
+    Parameters
+    ----------
+    cell : int
+        The value of the cell
+    neighbours : int
+        The number of live neighbours of the cell
+    rng : numpy random generator
+        The random number generator to use.
+
+    Returns
+    -------
+    cell : int
+        The value of the cell after the cellular automata rules have been applied.
+    '''
+
+    # Check if the random number generator is None
+    if rng is None:
+        raise ValueError("Random number generator is required for this algorithm. The random number generator cannot be None.")
+
+    # Check if cell is dead
+    if cell == 0:
+        # if the cell has no live neighbours, it has a chance to live
+        if neighbours == 0:
+            if rng.random() < 0.5:
+                cell = 1
+
+    # Return the cell
+    return cell
