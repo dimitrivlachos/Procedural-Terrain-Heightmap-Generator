@@ -93,6 +93,30 @@ class Terrain:
             A string representation of the terrain object.
         '''
         return f'Terrain object with seed {self.seed} and start size {self.start_size}.'
+    
+    def __initialize_heightmap(self):
+        '''
+        Initializes the heightmap.
+
+        Parameters
+        ----------
+        None
+
+        Returns
+        -------
+        heightmap : numpy array
+            The initialized heightmap.
+        '''
+
+        # Initialize the seed map / island layer
+        heightmap = np.zeros(self.start_size, dtype = int)
+        
+        # Randomly set 1/10 of the pixels to 1
+        indices_to_flip = self.rng.random(heightmap.shape) < 0.1
+        heightmap[indices_to_flip] = 1
+
+        # Return the initialized heightmap
+        return heightmap
 
     def __zoom(self, heightmap, zoom_factor = 2):
         '''
@@ -241,12 +265,8 @@ class Terrain:
         heightmap : numpy array
             The heightmap for the terrain object.
         '''
-        # Initialize the seed map / island layer
-        heightmap = np.zeros(self.start_size, dtype = int)
-        
-        # Randomly set 1/10 of the pixels to 1
-        indices_to_flip = self.rng.random(heightmap.shape) < 0.1
-        heightmap[indices_to_flip] = 1
+        # Initialize the heightmap
+        heightmap = self.__initialize_heightmap()
 
         # Generate the first stack of layers
         heightmap = self.__cellular_stack(heightmap)
