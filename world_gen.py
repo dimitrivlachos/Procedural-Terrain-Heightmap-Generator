@@ -170,27 +170,22 @@ class Terrain:
 
         # Return the ocean layer
         return heightmap
-
-    def generate(self):
+    
+    def __cellular_stack(self, heightmap):
         '''
-        Generates the heightmap for the terrain object.
-
+        Generates the first stack of layers for the heightmap.
+        This is done through the usage of cellular automata.
+        Hence the name.
+        
         Parameters
         ----------
-        None
-
+        heightmap : numpy array
+        
         Returns
         -------
         heightmap : numpy array
-            The heightmap for the terrain object.
+            The heightmap with the first stack of layers.
         '''
-
-        # Initialize the seed map / island layer
-        heightmap = np.zeros(self.start_size, dtype = int)
-        
-        # Randomly set 1/10 of the pixels to 1
-        indices_to_flip = self.rng.random(heightmap.shape) < 0.1
-        heightmap[indices_to_flip] = 1
 
         # Zoom in on the island layer 4096->2048 per block
         # This takes the island layer from 4x4 to 8x8 (by default)
@@ -228,8 +223,34 @@ class Terrain:
         # TODO: Add deep ocean
 
         # Save the heightmap to text
-        np.savetxt(f'heightmap_{self.seed}.txt', heightmap, fmt='%d')
+        #np.savetxt(f'heightmap_{self.seed}.txt', heightmap, fmt='%d')
 
+        # Return the heightmap
+        return heightmap
+
+    def generate(self):
+        '''
+        Generates the heightmap for the terrain object.
+
+        Parameters
+        ----------
+        None
+
+        Returns
+        -------
+        heightmap : numpy array
+            The heightmap for the terrain object.
+        '''
+        # Initialize the seed map / island layer
+        heightmap = np.zeros(self.start_size, dtype = int)
+        
+        # Randomly set 1/10 of the pixels to 1
+        indices_to_flip = self.rng.random(heightmap.shape) < 0.1
+        heightmap[indices_to_flip] = 1
+
+        # Generate the first stack of layers
+        heightmap = self.__cellular_stack(heightmap)
+        
         self.heightmap = heightmap
 
 # Test code
@@ -238,5 +259,3 @@ if __name__ == '__main__':
     terraintest.generate()
     plt.imshow(terraintest.heightmap, cmap='gray')
     plt.show()
-
-    #print(type(terraintest.heightmap))
