@@ -149,6 +149,9 @@ class Terrain:
         # Increase the tracked size of the heightmap
         self.size = (self.size[0] * zoom_factor, self.size[1] * zoom_factor)
 
+        # Apply cellular automata to the zoomed heightmap
+        zoomed_heightmap = ca.cellular_automata(zoomed_heightmap, ca.zoom_imperfection, rng=self.rng)
+
         # Return the zoomed heightmap
         return zoomed_heightmap
     
@@ -214,9 +217,6 @@ class Terrain:
         # Zoom in on the island layer 4096->2048 per block
         # This takes the island layer from 4x4 to 8x8 (by default)
         heightmap = self.__zoom(heightmap)
-
-        # Apply cellular automata to the island layer
-        heightmap = ca.cellular_automata(heightmap, ca.add_island, rng=self.rng)
 
         # Perform add island step
         heightmap = self.__add_island(heightmap)
